@@ -73,6 +73,9 @@
     ["Nieuw-Zeeland", "NZL", "🇳🇿", "OFC"]
   ];
 
+  // Landen alfabetisch tonen (sticker-codes blijven ongewijzigd)
+  TEAMS.sort(function (a, b) { return a[0].localeCompare(b[0], "nl"); });
+
   var INTRO = [
     "Officieel embleem",
     "Gastland Verenigde Staten",
