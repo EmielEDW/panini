@@ -1,8 +1,7 @@
 /*
  * Lokale opslag (localStorage). Bewaart:
  *   - collection: { <code>: { owned: bool, dupes: int } }
- *   - names:      { <code>: "aangepaste naam" }
- *   - settings:   { packPrice: number }
+ *   - settings:   { packPrice: number, theme: "dark"|"light" }
  * Plus export/import naar JSON-bestand.
  */
 (function () {
@@ -12,7 +11,6 @@
 
   var state = {
     collection: {},
-    names: {},
     settings: { packPrice: window.PaniniChecklist.defaultPackPrice, theme: "dark" }
   };
 
@@ -28,7 +26,6 @@
       if (raw) {
         var parsed = JSON.parse(raw);
         state.collection = parsed.collection || {};
-        state.names = parsed.names || {};
         state.settings = Object.assign(defaultSettings(), parsed.settings || {});
       }
     } catch (e) {
@@ -78,23 +75,6 @@
       this.setDupes(code, this.dupes(code) + delta);
     },
 
-    name: function (code, fallback) {
-      return state.names[code] != null && state.names[code] !== "" ? state.names[code] : fallback;
-    },
-
-    hasCustomName: function (code) {
-      return state.names[code] != null && state.names[code] !== "";
-    },
-
-    setName: function (code, name) {
-      if (name == null || name.trim() === "") {
-        delete state.names[code];
-      } else {
-        state.names[code] = name.trim();
-      }
-      persist();
-    },
-
     packPrice: function () { return state.settings.packPrice; },
     setPackPrice: function (p) {
       var v = parseFloat(p);
@@ -113,7 +93,6 @@
 
     resetAll: function () {
       state.collection = {};
-      state.names = {};
       state.settings = defaultSettings();
       persist();
     },
@@ -139,7 +118,6 @@
         try {
           var parsed = JSON.parse(reader.result);
           state.collection = parsed.collection || {};
-          state.names = parsed.names || {};
           state.settings = Object.assign(defaultSettings(), parsed.settings || {});
           persist();
           cb(null);

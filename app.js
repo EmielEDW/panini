@@ -9,8 +9,6 @@
   // ---- afgeleide data ----
   var baseStickers = CL.stickers.filter(function (s) { return !s.bonus; });
   var bonusStickers = CL.stickers.filter(function (s) { return s.bonus; });
-  var byCode = {};
-  CL.stickers.forEach(function (s) { byCode[s.code] = s; });
 
   var stickersBySection = {};
   CL.stickers.forEach(function (s) {
@@ -55,6 +53,28 @@
     var p = pct(have, total);
     var cls = p === 100 ? "full" : p >= 60 ? "mid" : "low";
     return '<div class="bar"><div class="bar-fill ' + cls + '" style="width:' + p + '%"></div></div>';
+  }
+
+  // Alleen echte, gecureerde labels tonen (legends/intro). Spelers tonen enkel hun code.
+  function stickerLabel(s) {
+    return s.type === "legend" || s.type === "intro" ? s.name : "";
+  }
+
+  var TYPE_TAG = { logo: "Logo", teamphoto: "Foto", legend: "Legend", special: "Special", intro: "Intro" };
+
+  function missLine(s) {
+    var label = stickerLabel(s);
+    return "<li><span class='tflag'>" + s.countryFlag + "</span><span class='mc'>" + esc(s.code) + "</span>" +
+      (label ? "<span class='ml-label'>" + esc(label) + "</span>" : "") + "</li>";
+  }
+
+  function dupeRow(s) {
+    var sub = stickerLabel(s) || s.country;
+    return '<div class="dupe-row"><span class="tflag">' + s.countryFlag + '</span><span class="mc">' + esc(s.code) + "</span>" +
+      '<span class="dr-name">' + esc(sub) + "</span>" +
+      '<span class="stepper"><button class="btn ghost" data-dupe="-' + s.code + '">−</button>' +
+      "<b>" + Store.dupes(s.code) + "</b>" +
+      '<button class="btn ghost" data-dupe="+' + s.code + '">+</button></span></div>';
   }
 
   // coupon-collector: verwacht aantal getrokken stickers om de laatste m van n te halen = n * H_m
@@ -192,7 +212,7 @@
           "</div>" +
         "</div>" +
         progressBar(s.have, s.total) +
-        '<p class="muted">Klik een sticker om aan/af te vinken. Gebruik − / + voor dubbels. Klik ✎ om de naam aan te passen.</p>' +
+        '<p class="muted">Klik een sticker om aan/af te vinken. Gebruik − / + voor dubbels.</p>' +
         '<div class="sticker-grid">' + list.map(stickerTile).join("") + "</div>" +
       "</section>"
     );
@@ -201,20 +221,23 @@
   function stickerTile(s) {
     var owned = Store.isOwned(s.code);
     var dupes = Store.dupes(s.code);
-    var name = Store.name(s.code, s.name);
-    var typeTag = s.type === "logo" ? "Logo" : s.type === "teamphoto" ? "Foto" : s.type === "legend" ? "Legend" : s.type === "special" ? "Special" : s.type === "intro" ? "Intro" : "";
+    var tag = TYPE_TAG[s.type] || "";
+    var label = stickerLabel(s);
     return (
       '<div class="tile ' + (owned ? "owned" : "missing") + '" data-toggle="' + s.code + '">' +
-        '<button class="edit-name" data-edit="' + s.code + '" title="Naam aanpassen">✎</button>' +
-        '<div class="tile-num"><span class="tflag">' + s.countryFlag + "</span> " + esc(s.code) + (typeTag ? ' <span class="tag">' + typeTag + "</span>" : "") + "</div>" +
-        '<div class="tile-name">' + esc(name) + "</div>" +
+        '<div class="tile-top">' +
+          '<span class="tflag">' + s.countryFlag + "</span>" +
+          '<span class="tile-code">' + esc(s.code) + "</span>" +
+          (tag ? '<span class="tag">' + tag + "</span>" : "") +
+          '<span class="tile-check">' + (owned ? "✓" : "") + "</span>" +
+        "</div>" +
+        (label ? '<div class="tile-label">' + esc(label) + "</div>" : "") +
         '<div class="tile-foot">' +
           '<div class="dupe-ctl' + (dupes > 0 ? " has" : "") + '" title="Dubbels (extra exemplaren)">' +
             '<button class="dupe-btn" data-dupe="-' + s.code + '" title="Dubbel eraf">−</button>' +
             '<span class="dupe-val">' + dupes + "</span>" +
             '<button class="dupe-btn" data-dupe="+' + s.code + '" title="Dubbel erbij">+</button>' +
           "</div>" +
-          '<div class="tile-check">' + (owned ? "✓" : "") + "</div>" +
         "</div>" +
       "</div>"
     );
@@ -236,9 +259,7 @@
       if (miss.length === 0) return;
       blocks.push(
         '<div class="miss-block"><h3>' + t.flag + " " + esc(t.name) + ' <small>' + miss.length + " missend</small></h3>" +
-        '<ul class="miss-list">' + miss.map(function (s) {
-          return "<li><span class='mc'>" + esc(s.code) + "</span> " + esc(Store.name(s.code, s.name)) + "</li>";
-        }).join("") + "</ul></div>"
+        '<ul class="miss-list">' + miss.map(missLine).join("") + "</ul></div>"
       );
     });
 
@@ -250,9 +271,7 @@
         var sec = CL.sections.filter(function (x) { return x.id === id; })[0];
         blocks.unshift(
           '<div class="miss-block"><h3>' + esc(sec.title) + ' <small>' + miss.length + " missend</small></h3>" +
-          '<ul class="miss-list">' + miss.map(function (s) {
-            return "<li><span class='mc'>" + esc(s.code) + "</span> " + esc(Store.name(s.code, s.name)) + "</li>";
-          }).join("") + "</ul></div>"
+          '<ul class="miss-list">' + miss.map(missLine).join("") + "</ul></div>"
         );
       });
     }
@@ -272,18 +291,13 @@
     var dupeStickers = CL.stickers.filter(function (s) { return Store.dupes(s.code) > 0; });
     var total = dupeStickers.reduce(function (a, s) { return a + Store.dupes(s.code); }, 0);
     var rows = dupeStickers.length
-      ? dupeStickers.map(function (s) {
-          return '<div class="dupe-row"><span class="mc">' + esc(s.code) + "</span><span class='dr-name'>" + esc(Store.name(s.code, s.name)) + "</span>" +
-            '<span class="stepper"><button class="btn ghost" data-dupe="-' + s.code + '">−</button>' +
-            "<b>" + Store.dupes(s.code) + "</b>" +
-            '<button class="btn ghost" data-dupe="+' + s.code + '">+</button></span></div>';
-        }).join("")
+      ? dupeStickers.map(dupeRow).join("")
       : '<p class="muted">Nog geen dubbels ingevoerd. Voeg ze toe via een team-sticker of zoek hieronder.</p>';
 
     return (
       '<section class="panel">' +
         "<h2>Dubbels <small>" + total + " stuks om te ruilen</small></h2>" +
-        '<div class="dupe-add"><input id="dupe-search" placeholder="Zoek sticker-code (bv. ARG5) of naam…">' +
+        '<div class="dupe-add"><input id="dupe-search" placeholder="Zoek sticker-code (bv. ARG5) of land…">' +
           '<button class="btn" data-action="copy-dupes">📋 Kopieer ruillijst</button></div>' +
         '<div id="dupe-search-results" class="search-results"></div>' +
         '<div class="dupe-list">' + rows + "</div>" +
@@ -381,13 +395,10 @@
     if (q.length < 2) { box.innerHTML = ""; return; }
     var matches = CL.stickers.filter(function (s) {
       return s.code.toLowerCase().indexOf(q) === 0 ||
-        Store.name(s.code, s.name).toLowerCase().indexOf(q) !== -1;
+        s.country.toLowerCase().indexOf(q) !== -1 ||
+        stickerLabel(s).toLowerCase().indexOf(q) !== -1;
     }).slice(0, 12);
-    box.innerHTML = matches.map(function (s) {
-      return '<div class="dupe-row"><span class="mc">' + esc(s.code) + "</span><span class='dr-name'>" + esc(Store.name(s.code, s.name)) + "</span>" +
-        '<span class="stepper"><button class="btn ghost" data-dupe="-' + s.code + '">−</button><b>' + Store.dupes(s.code) +
-        '</b><button class="btn ghost" data-dupe="+' + s.code + '">+</button></span></div>';
-    }).join("") || '<p class="muted">Geen sticker gevonden.</p>';
+    box.innerHTML = matches.map(dupeRow).join("") || '<p class="muted">Geen sticker gevonden.</p>';
   }
 
   // ---- export-lijsten ----
@@ -419,7 +430,7 @@
       if (!miss.length) return;
       lines.push("");
       lines.push("# " + sec.title + " (" + miss.length + ")");
-      miss.forEach(function (s) { lines.push(s.code + " - " + Store.name(s.code, s.name)); });
+      miss.forEach(function (s) { lines.push(s.code + (stickerLabel(s) ? " - " + stickerLabel(s) : "")); });
     });
     return lines.join("\n");
   }
@@ -427,7 +438,7 @@
     var lines = ["Panini WK 2026 — dubbels om te ruilen:"];
     CL.stickers.forEach(function (s) {
       var d = Store.dupes(s.code);
-      if (d > 0) lines.push(s.code + " - " + Store.name(s.code, s.name) + " (x" + d + ")");
+      if (d > 0) lines.push(s.code + " - " + (stickerLabel(s) || s.country) + " (x" + d + ")");
     });
     return lines.join("\n");
   }
@@ -436,18 +447,9 @@
   app.addEventListener("click", function (e) {
     // klik op de dubbel-teller (niet de knop) mag de sticker niet aan/af vinken
     if (e.target.closest(".dupe-ctl") && !e.target.closest("[data-dupe]")) return;
-    var el = e.target.closest("[data-nav],[data-team],[data-toggle],[data-edit],[data-bulk],[data-dupe],[data-filter],[data-action]");
+    var el = e.target.closest("[data-nav],[data-team],[data-toggle],[data-bulk],[data-dupe],[data-filter],[data-action]");
     if (!el) return;
 
-    if (el.hasAttribute("data-edit")) {
-      e.stopPropagation();
-      var code = el.getAttribute("data-edit");
-      var s = byCode[code];
-      var current = Store.name(code, s.name);
-      var v = window.prompt("Naam voor " + code + ":", current);
-      if (v !== null) { Store.setName(code, v); render(); }
-      return;
-    }
     if (el.hasAttribute("data-toggle")) {
       Store.toggleOwned(el.getAttribute("data-toggle"));
       render();
