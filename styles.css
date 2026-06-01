@@ -138,9 +138,9 @@ body {
 .tile:hover { border-color: var(--accent2); }
 .tile.owned { background: var(--owned-bg); border-color: var(--owned-line); }
 .tile.missing { opacity: .96; }
-.tile-num { font-size: 11px; color: var(--muted); font-weight: 700; letter-spacing: .3px; }
-.tile-num .tag { background: var(--accent2); color: #fff; border-radius: 6px; padding: 1px 5px; font-size: 9px; margin-left: 4px; }
-.tile-name { font-size: 13px; font-weight: 600; margin-top: 4px; padding-right: 18px; line-height: 1.3; }
+.tile-num { font-size: 15px; color: var(--text); font-weight: 800; letter-spacing: .2px; padding-right: 18px; }
+.tile-num .tag { background: var(--accent2); color: #fff; border-radius: 6px; padding: 1px 5px; font-size: 9px; margin-left: 4px; vertical-align: middle; font-weight: 700; }
+.tile-name { font-size: 11px; font-weight: 500; color: var(--muted); margin-top: 3px; line-height: 1.3; }
 .tile-foot { display: flex; align-items: center; justify-content: space-between; margin-top: auto; padding-top: 10px; }
 .dupe-ctl { display: flex; align-items: center; gap: 6px; }
 .dupe-btn { width: 26px; height: 26px; border-radius: 7px; border: 1px solid var(--line); background: var(--bar-bg); color: var(--text); cursor: pointer; font-size: 16px; font-weight: 800; line-height: 1; display: flex; align-items: center; justify-content: center; padding: 0; }
