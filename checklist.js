@@ -15,66 +15,71 @@
 (function () {
   "use strict";
 
-  // [naam, FIFA-code, vlag-emoji, confederatie]
+  // Officiële albumvolgorde: per groep A→L, binnen de groep op lotingspositie.
+  // Groepen volgens de FIFA-eindloting van 5 dec 2025.
+  // [naam, FIFA-code, vlag-emoji, confederatie, groep]
   var TEAMS = [
-    // UEFA (16)
-    ["Oostenrijk", "AUT", "🇦🇹", "UEFA"],
-    ["België", "BEL", "🇧🇪", "UEFA"],
-    ["Bosnië-Herzegovina", "BIH", "🇧🇦", "UEFA"],
-    ["Kroatië", "CRO", "🇭🇷", "UEFA"],
-    ["Tsjechië", "CZE", "🇨🇿", "UEFA"],
-    ["Engeland", "ENG", "🏴󠁧󠁢󠁥󠁮󠁧󠁿", "UEFA"],
-    ["Frankrijk", "FRA", "🇫🇷", "UEFA"],
-    ["Duitsland", "GER", "🇩🇪", "UEFA"],
-    ["Nederland", "NED", "🇳🇱", "UEFA"],
-    ["Noorwegen", "NOR", "🇳🇴", "UEFA"],
-    ["Portugal", "POR", "🇵🇹", "UEFA"],
-    ["Schotland", "SCO", "🏴󠁧󠁢󠁳󠁣󠁴󠁿", "UEFA"],
-    ["Spanje", "ESP", "🇪🇸", "UEFA"],
-    ["Zweden", "SWE", "🇸🇪", "UEFA"],
-    ["Zwitserland", "SUI", "🇨🇭", "UEFA"],
-    ["Turkije", "TUR", "🇹🇷", "UEFA"],
-    // CONMEBOL (6)
-    ["Argentinië", "ARG", "🇦🇷", "CONMEBOL"],
-    ["Brazilië", "BRA", "🇧🇷", "CONMEBOL"],
-    ["Colombia", "COL", "🇨🇴", "CONMEBOL"],
-    ["Ecuador", "ECU", "🇪🇨", "CONMEBOL"],
-    ["Paraguay", "PAR", "🇵🇾", "CONMEBOL"],
-    ["Uruguay", "URU", "🇺🇾", "CONMEBOL"],
-    // CONCACAF (6)
-    ["Canada", "CAN", "🇨🇦", "CONCACAF"],
-    ["Curaçao", "CUW", "🇨🇼", "CONCACAF"],
-    ["Haïti", "HAI", "🇭🇹", "CONCACAF"],
-    ["Mexico", "MEX", "🇲🇽", "CONCACAF"],
-    ["Panama", "PAN", "🇵🇦", "CONCACAF"],
-    ["Verenigde Staten", "USA", "🇺🇸", "CONCACAF"],
-    // CAF (10)
-    ["Algerije", "ALG", "🇩🇿", "CAF"],
-    ["Kaapverdië", "CPV", "🇨🇻", "CAF"],
-    ["DR Congo", "COD", "🇨🇩", "CAF"],
-    ["Egypte", "EGY", "🇪🇬", "CAF"],
-    ["Ghana", "GHA", "🇬🇭", "CAF"],
-    ["Ivoorkust", "CIV", "🇨🇮", "CAF"],
-    ["Marokko", "MAR", "🇲🇦", "CAF"],
-    ["Senegal", "SEN", "🇸🇳", "CAF"],
-    ["Zuid-Afrika", "RSA", "🇿🇦", "CAF"],
-    ["Tunesië", "TUN", "🇹🇳", "CAF"],
-    // AFC (9)
-    ["Australië", "AUS", "🇦🇺", "AFC"],
-    ["Iran", "IRN", "🇮🇷", "AFC"],
-    ["Irak", "IRQ", "🇮🇶", "AFC"],
-    ["Japan", "JPN", "🇯🇵", "AFC"],
-    ["Jordanië", "JOR", "🇯🇴", "AFC"],
-    ["Qatar", "QAT", "🇶🇦", "AFC"],
-    ["Saoedi-Arabië", "KSA", "🇸🇦", "AFC"],
-    ["Zuid-Korea", "KOR", "🇰🇷", "AFC"],
-    ["Oezbekistan", "UZB", "🇺🇿", "AFC"],
-    // OFC (1)
-    ["Nieuw-Zeeland", "NZL", "🇳🇿", "OFC"]
+    // Groep A
+    ["Mexico", "MEX", "🇲🇽", "CONCACAF", "A"],
+    ["Zuid-Afrika", "RSA", "🇿🇦", "CAF", "A"],
+    ["Zuid-Korea", "KOR", "🇰🇷", "AFC", "A"],
+    ["Tsjechië", "CZE", "🇨🇿", "UEFA", "A"],
+    // Groep B
+    ["Canada", "CAN", "🇨🇦", "CONCACAF", "B"],
+    ["Bosnië-Herzegovina", "BIH", "🇧🇦", "UEFA", "B"],
+    ["Qatar", "QAT", "🇶🇦", "AFC", "B"],
+    ["Zwitserland", "SUI", "🇨🇭", "UEFA", "B"],
+    // Groep C
+    ["Brazilië", "BRA", "🇧🇷", "CONMEBOL", "C"],
+    ["Marokko", "MAR", "🇲🇦", "CAF", "C"],
+    ["Haïti", "HAI", "🇭🇹", "CONCACAF", "C"],
+    ["Schotland", "SCO", "🏴󠁧󠁢󠁳󠁣󠁴󠁿", "UEFA", "C"],
+    // Groep D
+    ["Verenigde Staten", "USA", "🇺🇸", "CONCACAF", "D"],
+    ["Paraguay", "PAR", "🇵🇾", "CONMEBOL", "D"],
+    ["Australië", "AUS", "🇦🇺", "AFC", "D"],
+    ["Turkije", "TUR", "🇹🇷", "UEFA", "D"],
+    // Groep E
+    ["Duitsland", "GER", "🇩🇪", "UEFA", "E"],
+    ["Curaçao", "CUW", "🇨🇼", "CONCACAF", "E"],
+    ["Ivoorkust", "CIV", "🇨🇮", "CAF", "E"],
+    ["Ecuador", "ECU", "🇪🇨", "CONMEBOL", "E"],
+    // Groep F
+    ["Nederland", "NED", "🇳🇱", "UEFA", "F"],
+    ["Japan", "JPN", "🇯🇵", "AFC", "F"],
+    ["Zweden", "SWE", "🇸🇪", "UEFA", "F"],
+    ["Tunesië", "TUN", "🇹🇳", "CAF", "F"],
+    // Groep G
+    ["België", "BEL", "🇧🇪", "UEFA", "G"],
+    ["Egypte", "EGY", "🇪🇬", "CAF", "G"],
+    ["Iran", "IRN", "🇮🇷", "AFC", "G"],
+    ["Nieuw-Zeeland", "NZL", "🇳🇿", "OFC", "G"],
+    // Groep H
+    ["Spanje", "ESP", "🇪🇸", "UEFA", "H"],
+    ["Kaapverdië", "CPV", "🇨🇻", "CAF", "H"],
+    ["Saoedi-Arabië", "KSA", "🇸🇦", "AFC", "H"],
+    ["Uruguay", "URU", "🇺🇾", "CONMEBOL", "H"],
+    // Groep I
+    ["Frankrijk", "FRA", "🇫🇷", "UEFA", "I"],
+    ["Senegal", "SEN", "🇸🇳", "CAF", "I"],
+    ["Irak", "IRQ", "🇮🇶", "AFC", "I"],
+    ["Noorwegen", "NOR", "🇳🇴", "UEFA", "I"],
+    // Groep J
+    ["Argentinië", "ARG", "🇦🇷", "CONMEBOL", "J"],
+    ["Algerije", "ALG", "🇩🇿", "CAF", "J"],
+    ["Oostenrijk", "AUT", "🇦🇹", "UEFA", "J"],
+    ["Jordanië", "JOR", "🇯🇴", "AFC", "J"],
+    // Groep K
+    ["Portugal", "POR", "🇵🇹", "UEFA", "K"],
+    ["DR Congo", "COD", "🇨🇩", "CAF", "K"],
+    ["Oezbekistan", "UZB", "🇺🇿", "AFC", "K"],
+    ["Colombia", "COL", "🇨🇴", "CONMEBOL", "K"],
+    // Groep L
+    ["Engeland", "ENG", "🏴󠁧󠁢󠁥󠁮󠁧󠁿", "UEFA", "L"],
+    ["Kroatië", "CRO", "🇭🇷", "UEFA", "L"],
+    ["Ghana", "GHA", "🇬🇭", "CAF", "L"],
+    ["Panama", "PAN", "🇵🇦", "CONCACAF", "L"]
   ];
-
-  // Landen alfabetisch tonen (sticker-codes blijven ongewijzigd)
-  TEAMS.sort(function (a, b) { return a[0].localeCompare(b[0], "nl"); });
 
   var INTRO = [
     "Officieel embleem",
@@ -144,7 +149,7 @@
 
   // 3) Teams (48 x 20)
   TEAMS.forEach(function (t) {
-    var name = t[0], code = t[1], flag = t[2], conf = t[3];
+    var name = t[0], code = t[1], flag = t[2], conf = t[3], group = t[4];
     var sectionId = "team-" + code;
     sections.push({
       id: sectionId,
@@ -152,9 +157,10 @@
       kind: "team",
       teamCode: code,
       teamFlag: flag,
-      confederation: conf
+      confederation: conf,
+      group: group
     });
-    teams.push({ code: code, name: name, flag: flag, confederation: conf, sectionId: sectionId });
+    teams.push({ code: code, name: name, flag: flag, confederation: conf, group: group, sectionId: sectionId });
 
     for (var n = 1; n <= 20; n++) {
       var type, label;

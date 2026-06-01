@@ -160,7 +160,7 @@
         (s.complete ? '<span class="badge-ok">✓</span>' : "") + "</div>" +
         '<div class="tc-count">' + s.have + " / " + s.total + "</div>" +
         progressBar(s.have, s.total) +
-        '<div class="tc-conf">' + t.confederation + "</div>" +
+        '<div class="tc-conf">Groep ' + t.group + " · " + t.confederation + "</div>" +
         "</button>";
     }).join("");
     return sectionGridHtml("intro") + sectionGridHtml("legends") +
