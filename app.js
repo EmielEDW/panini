@@ -55,11 +55,6 @@
     return '<div class="bar"><div class="bar-fill ' + cls + '" style="width:' + p + '%"></div></div>';
   }
 
-  // Alleen echte, gecureerde labels tonen (legends/intro). Spelers tonen enkel hun code.
-  function stickerLabel(s) {
-    return s.type === "legend" || s.type === "intro" ? s.name : "";
-  }
-
   // Echte vlag-afbeeldingen (emoji-vlaggen renderen niet in Chrome/Windows).
   function flagImg(iso) {
     return '<img class="flag-img" loading="lazy" src="https://flagcdn.com/' + iso + '.svg" alt="">';
@@ -73,16 +68,13 @@
 
   var TYPE_TAG = { logo: "Logo", teamphoto: "Foto", legend: "Legend", special: "Special", intro: "Intro" };
 
-  function missLine(s) {
-    var label = stickerLabel(s);
-    return "<li>" + stickerFlag(s) + "<span class='mc'>" + esc(s.code) + "</span>" +
-      (label ? "<span class='ml-label'>" + esc(label) + "</span>" : "") + "</li>";
+  function missChip(s) {
+    return '<span class="miss-code">' + esc(s.code) + "</span>";
   }
 
   function dupeRow(s) {
-    var sub = stickerLabel(s) || s.country;
     return '<div class="dupe-row">' + stickerFlag(s) + '<span class="mc">' + esc(s.code) + "</span>" +
-      '<span class="dr-name">' + esc(sub) + "</span>" +
+      '<span class="dr-name">' + esc(s.country) + "</span>" +
       '<span class="stepper"><button class="btn ghost" data-dupe="-' + s.code + '">−</button>' +
       "<b>" + Store.dupes(s.code) + "</b>" +
       '<button class="btn ghost" data-dupe="+' + s.code + '">+</button></span></div>';
@@ -233,7 +225,6 @@
     var owned = Store.isOwned(s.code);
     var dupes = Store.dupes(s.code);
     var tag = TYPE_TAG[s.type] || "";
-    var label = stickerLabel(s);
     return (
       '<div class="tile ' + (owned ? "owned" : "missing") + '" data-toggle="' + s.code + '">' +
         '<div class="tile-top">' +
@@ -242,7 +233,6 @@
           (tag ? '<span class="tag">' + tag + "</span>" : "") +
           '<span class="tile-check">' + (owned ? "✓" : "") + "</span>" +
         "</div>" +
-        (label ? '<div class="tile-label">' + esc(label) + "</div>" : "") +
         '<div class="tile-foot">' +
           '<div class="dupe-ctl' + (dupes > 0 ? " has" : "") + '" title="Duplicates (spare copies)">' +
             '<button class="dupe-btn" data-dupe="-' + s.code + '" title="Remove duplicate">−</button>' +
@@ -270,7 +260,7 @@
       if (miss.length === 0) return;
       blocks.push(
         '<div class="miss-block"><h3>' + teamFlag(t) + " " + esc(t.name) + ' <small>' + miss.length + " missing</small></h3>" +
-        '<ul class="miss-list">' + miss.map(missLine).join("") + "</ul></div>"
+        '<div class="miss-codes">' + miss.map(missChip).join("") + "</div></div>"
       );
     });
 
@@ -282,7 +272,7 @@
         var sec = CL.sections.filter(function (x) { return x.id === id; })[0];
         blocks.unshift(
           '<div class="miss-block"><h3>' + esc(sec.title) + ' <small>' + miss.length + " missing</small></h3>" +
-          '<ul class="miss-list">' + miss.map(missLine).join("") + "</ul></div>"
+          '<div class="miss-codes">' + miss.map(missChip).join("") + "</div></div>"
         );
       });
     }
@@ -406,8 +396,7 @@
     if (q.length < 2) { box.innerHTML = ""; return; }
     var matches = CL.stickers.filter(function (s) {
       return s.code.toLowerCase().indexOf(q) === 0 ||
-        s.country.toLowerCase().indexOf(q) !== -1 ||
-        stickerLabel(s).toLowerCase().indexOf(q) !== -1;
+        s.country.toLowerCase().indexOf(q) !== -1;
     }).slice(0, 12);
     box.innerHTML = matches.map(dupeRow).join("") || '<p class="muted">No sticker found.</p>';
   }
@@ -441,7 +430,7 @@
       if (!miss.length) return;
       lines.push("");
       lines.push("# " + sec.title + " (" + miss.length + ")");
-      miss.forEach(function (s) { lines.push(s.code + (stickerLabel(s) ? " - " + stickerLabel(s) : "")); });
+      miss.forEach(function (s) { lines.push(s.code); });
     });
     return lines.join("\n");
   }
@@ -449,7 +438,7 @@
     var lines = ["Panini World Cup 2026 — duplicates to swap:"];
     CL.stickers.forEach(function (s) {
       var d = Store.dupes(s.code);
-      if (d > 0) lines.push(s.code + " - " + (stickerLabel(s) || s.country) + " (x" + d + ")");
+      if (d > 0) lines.push(s.code + " - " + s.country + " (x" + d + ")");
     });
     return lines.join("\n");
   }

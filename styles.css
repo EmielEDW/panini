@@ -136,7 +136,7 @@ body {
 .detail-head h2 { margin: 0; flex: 1; }
 .detail-actions { display: flex; gap: 8px; }
 .sticker-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; margin-top: 14px; }
-.tile { position: relative; display: flex; flex-direction: column; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px; cursor: pointer; min-height: 90px; transition: transform .12s, border-color .12s, box-shadow .12s, background .12s; }
+.tile { position: relative; display: flex; flex-direction: column; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px; cursor: pointer; min-height: 78px; transition: transform .12s, border-color .12s, box-shadow .12s, background .12s; }
 .tile:hover { border-color: var(--accent2); transform: translateY(-2px); box-shadow: 0 6px 18px var(--shadow); }
 .tile.owned { background: var(--owned-bg); border-color: var(--owned-line); }
 .tile-top { display: flex; align-items: center; gap: 7px; }
@@ -150,7 +150,6 @@ body {
 .tile-code { font-size: 15px; font-weight: 800; color: var(--text); letter-spacing: .3px; }
 .tag { background: var(--accent2); color: #fff; border-radius: 6px; padding: 2px 6px; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .3px; }
 .tile-check { margin-left: auto; color: var(--accent); font-weight: 900; font-size: 18px; }
-.tile-label { font-size: 11px; font-weight: 500; color: var(--muted); margin-top: 5px; line-height: 1.3; }
 .tile-foot { display: flex; align-items: center; margin-top: auto; padding-top: 10px; }
 .dupe-ctl { display: flex; align-items: center; gap: 6px; }
 .dupe-btn { width: 26px; height: 26px; border-radius: 8px; border: 1px solid var(--line); background: var(--bar-bg); color: var(--text); cursor: pointer; font-size: 16px; font-weight: 800; line-height: 1; display: flex; align-items: center; justify-content: center; padding: 0; transition: .12s; }
@@ -165,12 +164,11 @@ body {
 
 /* ---- missing list ---- */
 .miss-wrap { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
-.miss-block h3 { font-size: 14px; margin: 0 0 8px; }
-.miss-block h3 small { color: var(--muted); font-weight: 500; }
-.miss-list { list-style: none; margin: 0; padding: 0; }
-.miss-list li { font-size: 13px; padding: 5px 0; border-bottom: 1px dashed var(--dash); display: flex; align-items: center; gap: 6px; }
-.miss-list .tflag, .dupe-row .tflag { font-size: 15px; line-height: 1; }
-.ml-label { color: var(--muted); }
+.miss-block h3 { font-size: 14px; margin: 0 0 10px; display: flex; align-items: center; gap: 6px; }
+.miss-block h3 small { color: var(--muted); font-weight: 500; margin-left: auto; }
+.miss-codes { display: flex; flex-wrap: wrap; gap: 6px; }
+.miss-code { background: var(--bar-bg); border: 1px solid var(--line); border-radius: 7px; padding: 3px 8px; font-size: 12px; font-weight: 700; color: var(--accent2); }
+.dupe-row .tflag { font-size: 15px; line-height: 1; }
 .mc { display: inline-block; min-width: 52px; font-weight: 800; color: var(--accent2); font-size: 12px; }
 
 /* ---- dupes ---- */
