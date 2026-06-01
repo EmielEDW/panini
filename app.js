@@ -163,17 +163,17 @@
         '<div class="tc-conf">' + t.confederation + "</div>" +
         "</button>";
     }).join("");
-    return '<section class="panel"><h2>Teams (48)</h2><div class="teams-grid">' + rows + "</div></section>" + bonusSectionsHtml();
+    return sectionGridHtml("intro") + sectionGridHtml("legends") +
+      '<section class="panel"><h2>Teams (48)</h2><div class="teams-grid">' + rows + "</div></section>" +
+      sectionGridHtml("cocacola") + sectionGridHtml("extra");
   }
 
-  function bonusSectionsHtml() {
-    return ["cocacola", "extra"].map(function (id) {
-      var sec = CL.sections.filter(function (s) { return s.id === id; })[0];
-      var list = stickersBySection[id];
-      var have = ownedCount(list);
-      return '<section class="panel"><h2>' + esc(sec.title) + " <small>" + have + "/" + list.length + "</small></h2>" +
-        '<div class="sticker-grid">' + list.map(stickerTile).join("") + "</div></section>";
-    }).join("");
+  function sectionGridHtml(id) {
+    var sec = CL.sections.filter(function (s) { return s.id === id; })[0];
+    var list = stickersBySection[id];
+    var have = ownedCount(list);
+    return '<section class="panel"><h2>' + esc(sec.title) + " <small>" + have + "/" + list.length + "</small></h2>" +
+      '<div class="sticker-grid">' + list.map(stickerTile).join("") + "</div></section>";
   }
 
   function viewTeamDetail() {
