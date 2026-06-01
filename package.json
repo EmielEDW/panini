@@ -1,0 +1,15 @@
+{
+  "name": "panini-wk-2026",
+  "version": "1.0.0",
+  "description": "Panini WK 2026 Collectie Tracker",
+  "type": "module",
+  "scripts": {
+    "dev": "python3 server.py"
+  },
+  "keywords": ["panini", "world-cup", "sticker", "tracker"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@vercel/analytics": "^2.0.1"
+  }
+}
