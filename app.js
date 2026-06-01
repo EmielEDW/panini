@@ -107,8 +107,8 @@
   var TABS = [
     ["dashboard", "📊 Dashboard"],
     ["teams", "🌍 Teams"],
-    ["missing", "🔎 Wat mis ik"],
-    ["dupes", "🔁 Dubbels"],
+    ["missing", "🔎 Missing"],
+    ["dupes", "🔁 Duplicates"],
     ["stats", "📈 Stats"],
     ["calc", "🧮 Calculator"]
   ];
@@ -121,12 +121,12 @@
     }).join("");
     return (
       '<header class="topbar">' +
-        '<div class="brand"><span class="ball">⚽</span><div><h1>Panini WK 2026</h1>' +
-        '<span class="sub">' + baseHave + " / " + CL.baseCount + " stickers — " + pct(baseHave, CL.baseCount) + "% compleet</span></div></div>" +
+        '<div class="brand"><span class="ball">⚽</span><div><h1>Panini World Cup 2026</h1>' +
+        '<span class="sub">' + baseHave + " / " + CL.baseCount + " stickers — " + pct(baseHave, CL.baseCount) + "% complete</span></div></div>" +
         '<div class="actions">' +
-          '<button class="btn" data-action="theme" title="Wissel thema">' + (Store.theme() === "light" ? "🌙 Donker" : "☀︎ Licht") + "</button>" +
+          '<button class="btn" data-action="theme" title="Toggle theme">' + (Store.theme() === "light" ? "🌙 Dark" : "☀︎ Light") + "</button>" +
           '<button class="btn" data-action="export">⬇︎ Backup</button>' +
-          '<button class="btn" data-action="import">⬆︎ Inladen</button>' +
+          '<button class="btn" data-action="import">⬆︎ Import</button>' +
           '<input type="file" id="import-file" accept="application/json" hidden>' +
         "</div>" +
       "</header>" +
@@ -149,10 +149,10 @@
       .slice(0, 6);
 
     var cards =
-      card("Album compleet", pct(baseHave, CL.baseCount) + "%", baseHave + " / " + CL.baseCount) +
-      card("Nog nodig", String(missing), "stickers te gaan") +
-      card("Teams compleet", teamsComplete + " / 48", "volledige landen") +
-      card("Dubbels", String(dupes), "om te ruilen") +
+      card("Album complete", pct(baseHave, CL.baseCount) + "%", baseHave + " / " + CL.baseCount) +
+      card("Still needed", String(missing), "stickers to go") +
+      card("Teams complete", teamsComplete + " / 48", "full countries") +
+      card("Duplicates", String(dupes), "to swap") +
       card("Bonus", bonusHave + " / " + bonusStickers.length, "Coca-Cola + Extra");
 
     var nearlyHtml = nearly.length
@@ -163,18 +163,18 @@
             '<span class="mt-count">' + x.s.have + "/" + x.s.total + "</span>" +
             progressBar(x.s.have, x.s.total) + "</button>";
         }).join("")
-      : '<p class="muted">Nog niets afgevinkt. Ga naar <b>Teams</b> om te beginnen.</p>';
+      : '<p class="muted">Nothing checked yet. Go to <b>Teams</b> to start.</p>';
 
     return (
       '<section class="grid-cards">' +
         '<div class="big-progress">' +
-          "<h2>Voortgang van het boek</h2>" +
+          "<h2>Album progress</h2>" +
           progressBar(baseHave, CL.baseCount) +
-          '<p class="muted">' + baseHave + " van " + CL.baseCount + " stickers — nog " + missing + " te gaan</p>" +
+          '<p class="muted">' + baseHave + " of " + CL.baseCount + " stickers — " + missing + " to go</p>" +
         "</div>" +
         '<div class="cards">' + cards + "</div>" +
       "</section>" +
-      '<section class="panel"><h2>Bijna compleet</h2><div class="mini-teams">' + nearlyHtml + "</div></section>"
+      '<section class="panel"><h2>Almost complete</h2><div class="mini-teams">' + nearlyHtml + "</div></section>"
     );
   }
 
@@ -191,7 +191,7 @@
         (s.complete ? '<span class="badge-ok">✓</span>' : "") + "</div>" +
         '<div class="tc-count">' + s.have + " / " + s.total + "</div>" +
         progressBar(s.have, s.total) +
-        '<div class="tc-conf">Groep ' + t.group + " · " + t.confederation + "</div>" +
+        '<div class="tc-conf">Group ' + t.group + " · " + t.confederation + "</div>" +
         "</button>";
     }).join("");
     return sectionGridHtml("intro") + sectionGridHtml("legends") +
@@ -218,12 +218,12 @@
           '<button class="btn ghost" data-nav="teams">← Teams</button>' +
           "<h2>" + teamFlag(team) + " " + esc(team.name) + ' <small>' + s.have + "/" + s.total + "</small></h2>" +
           '<div class="detail-actions">' +
-            '<button class="btn" data-bulk="all" data-team="' + team.code + '">Alles afvinken</button>' +
-            '<button class="btn ghost" data-bulk="none" data-team="' + team.code + '">Wissen</button>' +
+            '<button class="btn" data-bulk="all" data-team="' + team.code + '">Check all</button>' +
+            '<button class="btn ghost" data-bulk="none" data-team="' + team.code + '">Clear</button>' +
           "</div>" +
         "</div>" +
         progressBar(s.have, s.total) +
-        '<p class="muted">Klik een sticker om aan/af te vinken. Gebruik − / + voor dubbels.</p>' +
+        '<p class="muted">Click a sticker to toggle it. Use − / + for duplicates.</p>' +
         '<div class="sticker-grid">' + list.map(stickerTile).join("") + "</div>" +
       "</section>"
     );
@@ -244,10 +244,10 @@
         "</div>" +
         (label ? '<div class="tile-label">' + esc(label) + "</div>" : "") +
         '<div class="tile-foot">' +
-          '<div class="dupe-ctl' + (dupes > 0 ? " has" : "") + '" title="Dubbels (extra exemplaren)">' +
-            '<button class="dupe-btn" data-dupe="-' + s.code + '" title="Dubbel eraf">−</button>' +
+          '<div class="dupe-ctl' + (dupes > 0 ? " has" : "") + '" title="Duplicates (spare copies)">' +
+            '<button class="dupe-btn" data-dupe="-' + s.code + '" title="Remove duplicate">−</button>' +
             '<span class="dupe-val">' + dupes + "</span>" +
-            '<button class="dupe-btn" data-dupe="+' + s.code + '" title="Dubbel erbij">+</button>' +
+            '<button class="dupe-btn" data-dupe="+' + s.code + '" title="Add duplicate">+</button>' +
           "</div>" +
         "</div>" +
       "</div>"
@@ -257,7 +257,7 @@
   function viewMissing() {
     var confs = ["all", "UEFA", "CONMEBOL", "CONCACAF", "CAF", "AFC", "OFC"];
     var filterBtns = confs.map(function (c) {
-      return '<button class="chip' + (missingFilter === c ? " active" : "") + '" data-filter="' + c + '">' + (c === "all" ? "Alles" : c) + "</button>";
+      return '<button class="chip' + (missingFilter === c ? " active" : "") + '" data-filter="' + c + '">' + (c === "all" ? "All" : c) + "</button>";
     }).join("");
 
     var teamsToShow = CL.teams.filter(function (t) { return missingFilter === "all" || t.confederation === missingFilter; });
@@ -269,7 +269,7 @@
       totalMissing += miss.length;
       if (miss.length === 0) return;
       blocks.push(
-        '<div class="miss-block"><h3>' + t.flag + " " + esc(t.name) + ' <small>' + miss.length + " missend</small></h3>" +
+        '<div class="miss-block"><h3>' + teamFlag(t) + " " + esc(t.name) + ' <small>' + miss.length + " missing</small></h3>" +
         '<ul class="miss-list">' + miss.map(missLine).join("") + "</ul></div>"
       );
     });
@@ -281,17 +281,17 @@
         if (!miss.length) return;
         var sec = CL.sections.filter(function (x) { return x.id === id; })[0];
         blocks.unshift(
-          '<div class="miss-block"><h3>' + esc(sec.title) + ' <small>' + miss.length + " missend</small></h3>" +
+          '<div class="miss-block"><h3>' + esc(sec.title) + ' <small>' + miss.length + " missing</small></h3>" +
           '<ul class="miss-list">' + miss.map(missLine).join("") + "</ul></div>"
         );
       });
     }
 
-    var body = blocks.length ? blocks.join("") : '<p class="muted">Niks meer missend in deze selectie! 🎉</p>';
+    var body = blocks.length ? blocks.join("") : '<p class="muted">Nothing missing in this selection! 🎉</p>';
     return (
       '<section class="panel">' +
-        '<div class="detail-head"><h2>Wat mis ik nog <small>' + totalMissing + " stickers</small></h2>" +
-          '<button class="btn" data-action="copy-missing">📋 Kopieer lijst</button></div>' +
+        '<div class="detail-head"><h2>What I\'m missing <small>' + totalMissing + " stickers</small></h2>" +
+          '<button class="btn" data-action="copy-missing">📋 Copy list</button></div>' +
         '<div class="chips">' + filterBtns + "</div>" +
         '<div class="miss-wrap">' + body + "</div>" +
       "</section>"
@@ -303,13 +303,13 @@
     var total = dupeStickers.reduce(function (a, s) { return a + Store.dupes(s.code); }, 0);
     var rows = dupeStickers.length
       ? dupeStickers.map(dupeRow).join("")
-      : '<p class="muted">Nog geen dubbels ingevoerd. Voeg ze toe via een team-sticker of zoek hieronder.</p>';
+      : '<p class="muted">No duplicates yet. Add them from a team sticker or search below.</p>';
 
     return (
       '<section class="panel">' +
-        "<h2>Dubbels <small>" + total + " stuks om te ruilen</small></h2>" +
-        '<div class="dupe-add"><input id="dupe-search" placeholder="Zoek sticker-code (bv. ARG5) of land…">' +
-          '<button class="btn" data-action="copy-dupes">📋 Kopieer ruillijst</button></div>' +
+        "<h2>Duplicates <small>" + total + " to swap</small></h2>" +
+        '<div class="dupe-add"><input id="dupe-search" placeholder="Search sticker code (e.g. ARG5) or country…">' +
+          '<button class="btn" data-action="copy-dupes">📋 Copy swap list</button></div>' +
         '<div id="dupe-search-results" class="search-results"></div>' +
         '<div class="dupe-list">' + rows + "</div>" +
       "</section>"
@@ -344,14 +344,14 @@
     }).join("");
 
     return (
-      '<section class="panel"><h2>Per sectie</h2>' + sectionRows.join("") + "</section>" +
-      '<section class="panel"><h2>Per confederatie</h2>' + confRows + "</section>" +
-      '<section class="panel"><h2>Grootste gaten</h2><ul class="gap-list">' + worst + "</ul></section>"
+      '<section class="panel"><h2>By section</h2>' + sectionRows.join("") + "</section>" +
+      '<section class="panel"><h2>By confederation</h2>' + confRows + "</section>" +
+      '<section class="panel"><h2>Biggest gaps</h2><ul class="gap-list">' + worst + "</ul></section>"
     );
   }
 
   function viewCalc() {
-    // Pool = stickers die in normale pakjes zitten (alle base 980). Bonus (CC/Extra) tellen niet mee.
+    // Pool = stickers available in normal packs (all 980 base). Bonus (CC/Extra) excluded.
     var pool = baseStickers.length; // 980
     var have = ownedCount(baseStickers);
     var missing = pool - have;
@@ -363,22 +363,22 @@
     var costNoTrade = packsNoTrade * price;
     var costTrade = packsTrade * price;
 
-    function money(v) { return "€" + v.toFixed(2).replace(".", ","); }
+    function money(v) { return "€" + v.toFixed(2); }
 
     var done = missing === 0;
     return (
       '<section class="panel">' +
-        "<h2>Pakjes-calculator</h2>" +
-        '<p class="muted">Schatting op basis van je huidige voortgang. "Zonder ruilen" gebruikt de coupon-collector-formule (elk pakje is willekeurig, dubbels stapelen op). "Met ruilen" gaat ervan uit dat je elke dubbel 1-op-1 ruilt.</p>' +
-        '<div class="calc-input"><label>Prijs per pakje (' + CL.packSize + ' stickers): €' +
+        "<h2>Pack calculator</h2>" +
+        '<p class="muted">Estimate based on your current progress. "Without trading" uses the coupon-collector formula (every pack is random, duplicates pile up). "With trading" assumes you swap every duplicate 1-for-1.</p>' +
+        '<div class="calc-input"><label>Price per pack (' + CL.packSize + ' stickers): €' +
           '<input id="pack-price" type="number" min="0.1" step="0.05" value="' + price + '"></label></div>' +
         '<div class="calc-grid">' +
-          card("Nog nodig", String(missing), "van " + pool + " stickers") +
-          card("Zonder ruilen", done ? "—" : packsNoTrade + " pakjes", done ? "compleet!" : money(costNoTrade)) +
-          card("Met ruilen (1:1)", done ? "—" : packsTrade + " pakjes", done ? "compleet!" : money(costTrade)) +
+          card("Still needed", String(missing), "of " + pool + " stickers") +
+          card("Without trading", done ? "—" : packsNoTrade + " packs", done ? "complete!" : money(costNoTrade)) +
+          card("With trading (1:1)", done ? "—" : packsTrade + " packs", done ? "complete!" : money(costTrade)) +
         "</div>" +
-        (done ? '<p class="done">🎉 Je album is compleet!</p>' :
-          '<p class="muted">Zonder ruilen verwacht je ±' + Math.round(expDraws) + ' losse stickers te trekken (incl. dubbels) om de laatste ' + missing + ' te vinden. Ruilen scheelt enorm: van ' + money(costNoTrade) + " naar " + money(costTrade) + ".</p>") +
+        (done ? '<p class="done">🎉 Your album is complete!</p>' :
+          '<p class="muted">Without trading you can expect to pull ±' + Math.round(expDraws) + ' loose stickers (incl. duplicates) to find the last ' + missing + ". Trading saves a lot: from " + money(costNoTrade) + " down to " + money(costTrade) + ".</p>") +
       "</section>"
     );
   }
@@ -409,7 +409,7 @@
         s.country.toLowerCase().indexOf(q) !== -1 ||
         stickerLabel(s).toLowerCase().indexOf(q) !== -1;
     }).slice(0, 12);
-    box.innerHTML = matches.map(dupeRow).join("") || '<p class="muted">Geen sticker gevonden.</p>';
+    box.innerHTML = matches.map(dupeRow).join("") || '<p class="muted">No sticker found.</p>';
   }
 
   // ---- export-lijsten ----
@@ -423,7 +423,7 @@
   function fallbackCopy(text, okMsg) {
     var ta = document.createElement("textarea");
     ta.value = text; document.body.appendChild(ta); ta.select();
-    try { document.execCommand("copy"); toast(okMsg); } catch (e) { toast("Kopiëren niet gelukt"); }
+    try { document.execCommand("copy"); toast(okMsg); } catch (e) { toast("Copy failed"); }
     document.body.removeChild(ta);
   }
   function toast(msg) {
@@ -435,7 +435,7 @@
   }
 
   function missingText() {
-    var lines = ["Panini WK 2026 — nog nodig:"];
+    var lines = ["Panini World Cup 2026 — still needed:"];
     CL.sections.forEach(function (sec) {
       var miss = stickersBySection[sec.id].filter(function (s) { return !Store.isOwned(s.code); });
       if (!miss.length) return;
@@ -446,7 +446,7 @@
     return lines.join("\n");
   }
   function dupesText() {
-    var lines = ["Panini WK 2026 — dubbels om te ruilen:"];
+    var lines = ["Panini World Cup 2026 — duplicates to swap:"];
     CL.stickers.forEach(function (s) {
       var d = Store.dupes(s.code);
       if (d > 0) lines.push(s.code + " - " + (stickerLabel(s) || s.country) + " (x" + d + ")");
@@ -495,8 +495,8 @@
       if (act === "theme") { Store.toggleTheme(); applyTheme(); render(); }
       else if (act === "export") Store.exportJSON();
       else if (act === "import") { var f = document.getElementById("import-file"); if (f) f.click(); }
-      else if (act === "copy-missing") copyToClipboard(missingText(), "Mislijst gekopieerd!");
-      else if (act === "copy-dupes") copyToClipboard(dupesText(), "Ruillijst gekopieerd!");
+      else if (act === "copy-missing") copyToClipboard(missingText(), "Missing list copied!");
+      else if (act === "copy-dupes") copyToClipboard(dupesText(), "Swap list copied!");
       return;
     }
   });
@@ -504,8 +504,8 @@
   app.addEventListener("change", function (e) {
     if (e.target.id === "import-file" && e.target.files && e.target.files[0]) {
       Store.importJSON(e.target.files[0], function (err) {
-        if (err) { alert("Inladen mislukt: ongeldig bestand."); return; }
-        toast("Backup ingeladen!");
+        if (err) { alert("Import failed: invalid file."); return; }
+        toast("Backup loaded!");
         render();
       });
     }

@@ -15,95 +15,95 @@
 (function () {
   "use strict";
 
-  // Officiële albumvolgorde: per groep A→L, binnen de groep op lotingspositie.
-  // Groepen volgens de FIFA-eindloting van 5 dec 2025.
-  // [naam, FIFA-code, vlag-emoji, confederatie, groep]
+  // Official album order: by group A→L, within each group by draw position.
+  // Groups per the FIFA final draw of 5 Dec 2025.
+  // [name, FIFA code, flag emoji, confederation, group]
   var TEAMS = [
-    // Groep A
+    // Group A
     ["Mexico", "MEX", "🇲🇽", "CONCACAF", "A"],
-    ["Zuid-Afrika", "RSA", "🇿🇦", "CAF", "A"],
-    ["Zuid-Korea", "KOR", "🇰🇷", "AFC", "A"],
-    ["Tsjechië", "CZE", "🇨🇿", "UEFA", "A"],
-    // Groep B
+    ["South Africa", "RSA", "🇿🇦", "CAF", "A"],
+    ["South Korea", "KOR", "🇰🇷", "AFC", "A"],
+    ["Czechia", "CZE", "🇨🇿", "UEFA", "A"],
+    // Group B
     ["Canada", "CAN", "🇨🇦", "CONCACAF", "B"],
-    ["Bosnië-Herzegovina", "BIH", "🇧🇦", "UEFA", "B"],
+    ["Bosnia & Herzegovina", "BIH", "🇧🇦", "UEFA", "B"],
     ["Qatar", "QAT", "🇶🇦", "AFC", "B"],
-    ["Zwitserland", "SUI", "🇨🇭", "UEFA", "B"],
-    // Groep C
-    ["Brazilië", "BRA", "🇧🇷", "CONMEBOL", "C"],
-    ["Marokko", "MAR", "🇲🇦", "CAF", "C"],
-    ["Haïti", "HAI", "🇭🇹", "CONCACAF", "C"],
-    ["Schotland", "SCO", "🏴󠁧󠁢󠁳󠁣󠁴󠁿", "UEFA", "C"],
-    // Groep D
-    ["Verenigde Staten", "USA", "🇺🇸", "CONCACAF", "D"],
+    ["Switzerland", "SUI", "🇨🇭", "UEFA", "B"],
+    // Group C
+    ["Brazil", "BRA", "🇧🇷", "CONMEBOL", "C"],
+    ["Morocco", "MAR", "🇲🇦", "CAF", "C"],
+    ["Haiti", "HAI", "🇭🇹", "CONCACAF", "C"],
+    ["Scotland", "SCO", "🏴󠁧󠁢󠁳󠁣󠁴󠁿", "UEFA", "C"],
+    // Group D
+    ["United States", "USA", "🇺🇸", "CONCACAF", "D"],
     ["Paraguay", "PAR", "🇵🇾", "CONMEBOL", "D"],
-    ["Australië", "AUS", "🇦🇺", "AFC", "D"],
-    ["Turkije", "TUR", "🇹🇷", "UEFA", "D"],
-    // Groep E
-    ["Duitsland", "GER", "🇩🇪", "UEFA", "E"],
+    ["Australia", "AUS", "🇦🇺", "AFC", "D"],
+    ["Türkiye", "TUR", "🇹🇷", "UEFA", "D"],
+    // Group E
+    ["Germany", "GER", "🇩🇪", "UEFA", "E"],
     ["Curaçao", "CUW", "🇨🇼", "CONCACAF", "E"],
-    ["Ivoorkust", "CIV", "🇨🇮", "CAF", "E"],
+    ["Ivory Coast", "CIV", "🇨🇮", "CAF", "E"],
     ["Ecuador", "ECU", "🇪🇨", "CONMEBOL", "E"],
-    // Groep F
-    ["Nederland", "NED", "🇳🇱", "UEFA", "F"],
+    // Group F
+    ["Netherlands", "NED", "🇳🇱", "UEFA", "F"],
     ["Japan", "JPN", "🇯🇵", "AFC", "F"],
-    ["Zweden", "SWE", "🇸🇪", "UEFA", "F"],
-    ["Tunesië", "TUN", "🇹🇳", "CAF", "F"],
-    // Groep G
-    ["België", "BEL", "🇧🇪", "UEFA", "G"],
-    ["Egypte", "EGY", "🇪🇬", "CAF", "G"],
+    ["Sweden", "SWE", "🇸🇪", "UEFA", "F"],
+    ["Tunisia", "TUN", "🇹🇳", "CAF", "F"],
+    // Group G
+    ["Belgium", "BEL", "🇧🇪", "UEFA", "G"],
+    ["Egypt", "EGY", "🇪🇬", "CAF", "G"],
     ["Iran", "IRN", "🇮🇷", "AFC", "G"],
-    ["Nieuw-Zeeland", "NZL", "🇳🇿", "OFC", "G"],
-    // Groep H
-    ["Spanje", "ESP", "🇪🇸", "UEFA", "H"],
-    ["Kaapverdië", "CPV", "🇨🇻", "CAF", "H"],
-    ["Saoedi-Arabië", "KSA", "🇸🇦", "AFC", "H"],
+    ["New Zealand", "NZL", "🇳🇿", "OFC", "G"],
+    // Group H
+    ["Spain", "ESP", "🇪🇸", "UEFA", "H"],
+    ["Cape Verde", "CPV", "🇨🇻", "CAF", "H"],
+    ["Saudi Arabia", "KSA", "🇸🇦", "AFC", "H"],
     ["Uruguay", "URU", "🇺🇾", "CONMEBOL", "H"],
-    // Groep I
-    ["Frankrijk", "FRA", "🇫🇷", "UEFA", "I"],
+    // Group I
+    ["France", "FRA", "🇫🇷", "UEFA", "I"],
     ["Senegal", "SEN", "🇸🇳", "CAF", "I"],
-    ["Irak", "IRQ", "🇮🇶", "AFC", "I"],
-    ["Noorwegen", "NOR", "🇳🇴", "UEFA", "I"],
-    // Groep J
-    ["Argentinië", "ARG", "🇦🇷", "CONMEBOL", "J"],
-    ["Algerije", "ALG", "🇩🇿", "CAF", "J"],
-    ["Oostenrijk", "AUT", "🇦🇹", "UEFA", "J"],
-    ["Jordanië", "JOR", "🇯🇴", "AFC", "J"],
-    // Groep K
+    ["Iraq", "IRQ", "🇮🇶", "AFC", "I"],
+    ["Norway", "NOR", "🇳🇴", "UEFA", "I"],
+    // Group J
+    ["Argentina", "ARG", "🇦🇷", "CONMEBOL", "J"],
+    ["Algeria", "ALG", "🇩🇿", "CAF", "J"],
+    ["Austria", "AUT", "🇦🇹", "UEFA", "J"],
+    ["Jordan", "JOR", "🇯🇴", "AFC", "J"],
+    // Group K
     ["Portugal", "POR", "🇵🇹", "UEFA", "K"],
     ["DR Congo", "COD", "🇨🇩", "CAF", "K"],
-    ["Oezbekistan", "UZB", "🇺🇿", "AFC", "K"],
+    ["Uzbekistan", "UZB", "🇺🇿", "AFC", "K"],
     ["Colombia", "COL", "🇨🇴", "CONMEBOL", "K"],
-    // Groep L
-    ["Engeland", "ENG", "🏴󠁧󠁢󠁥󠁮󠁧󠁿", "UEFA", "L"],
-    ["Kroatië", "CRO", "🇭🇷", "UEFA", "L"],
+    // Group L
+    ["England", "ENG", "🏴󠁧󠁢󠁥󠁮󠁧󠁿", "UEFA", "L"],
+    ["Croatia", "CRO", "🇭🇷", "UEFA", "L"],
     ["Ghana", "GHA", "🇬🇭", "CAF", "L"],
     ["Panama", "PAN", "🇵🇦", "CONCACAF", "L"]
   ];
 
   var INTRO = [
-    "Officieel embleem",
-    "Gastland Verenigde Staten",
-    "Gastland Canada",
-    "Gastland Mexico",
-    "Mascottes",
-    "WK-trofee",
-    "Officiële poster",
-    "Officiële bal",
-    "Stadions"
+    "Official emblem",
+    "Host nation United States",
+    "Host nation Canada",
+    "Host nation Mexico",
+    "Mascots",
+    "World Cup Trophy",
+    "Official poster",
+    "Official ball",
+    "Stadiums"
   ];
 
   var LEGENDS = [
-    "Brazilië 1970",
-    "Argentinië 1986 — Maradona",
-    "Italië 1982",
-    "Frankrijk 1998 — Zidane",
-    "Brazilië 2002 — Ronaldo",
-    "Duitsland 2014",
-    "Spanje 2010",
-    "Engeland 1966",
-    "Nederland — Cruijff",
-    "Argentinië 2022 — Messi",
+    "Brazil 1970",
+    "Argentina 1986 — Maradona",
+    "Italy 1982",
+    "France 1998 — Zidane",
+    "Brazil 2002 — Ronaldo",
+    "Germany 2014",
+    "Spain 2010",
+    "England 1966",
+    "Netherlands — Cruyff",
+    "Argentina 2022 — Messi",
     "FIFA Museum"
   ];
 
@@ -116,7 +116,7 @@
   }
 
   // 1) Intro
-  sections.push({ id: "intro", title: "Tornooi & Intro", kind: "intro" });
+  sections.push({ id: "intro", title: "Tournament & Intro", kind: "intro" });
   INTRO.forEach(function (name, i) {
     add({
       code: "FWC" + (i + 1),
@@ -177,14 +177,14 @@
       var type, label;
       if (n === 1) {
         type = "logo";
-        label = "Teamlogo (Foil)";
+        label = "Team logo (Foil)";
       } else if (n === 13) {
         type = "teamphoto";
-        label = "Teamfoto";
+        label = "Team photo";
       } else {
         type = "player";
-        // spelers doorlopend nummeren, logo (1) en teamfoto (13) overslaan
-        label = name + " speler " + (n < 13 ? n - 1 : n - 2);
+        // number players sequentially, skipping logo (1) and team photo (13)
+        label = name + " player " + (n < 13 ? n - 1 : n - 2);
       }
       add({
         code: code + n,
@@ -202,7 +202,7 @@
   });
 
   // 4) Coca-Cola exclusives (niet in pakjes)
-  sections.push({ id: "cocacola", title: "Coca-Cola Exclusief", kind: "bonus" });
+  sections.push({ id: "cocacola", title: "Coca-Cola Exclusive", kind: "bonus" });
   for (var c = 1; c <= 12; c++) {
     add({
       code: "CC" + c,
