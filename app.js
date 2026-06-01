@@ -60,17 +60,28 @@
     return s.type === "legend" || s.type === "intro" ? s.name : "";
   }
 
+  // Echte vlag-afbeeldingen (emoji-vlaggen renderen niet in Chrome/Windows).
+  function flagImg(iso) {
+    return '<img class="flag-img" loading="lazy" src="https://flagcdn.com/' + iso + '.svg" alt="">';
+  }
+  function stickerFlag(s) {
+    return s.iso ? flagImg(s.iso) : '<span class="tflag">' + s.countryFlag + "</span>";
+  }
+  function teamFlag(t) {
+    return t.iso ? flagImg(t.iso) : '<span class="tflag">' + t.flag + "</span>";
+  }
+
   var TYPE_TAG = { logo: "Logo", teamphoto: "Foto", legend: "Legend", special: "Special", intro: "Intro" };
 
   function missLine(s) {
     var label = stickerLabel(s);
-    return "<li><span class='tflag'>" + s.countryFlag + "</span><span class='mc'>" + esc(s.code) + "</span>" +
+    return "<li>" + stickerFlag(s) + "<span class='mc'>" + esc(s.code) + "</span>" +
       (label ? "<span class='ml-label'>" + esc(label) + "</span>" : "") + "</li>";
   }
 
   function dupeRow(s) {
     var sub = stickerLabel(s) || s.country;
-    return '<div class="dupe-row"><span class="tflag">' + s.countryFlag + '</span><span class="mc">' + esc(s.code) + "</span>" +
+    return '<div class="dupe-row">' + stickerFlag(s) + '<span class="mc">' + esc(s.code) + "</span>" +
       '<span class="dr-name">' + esc(sub) + "</span>" +
       '<span class="stepper"><button class="btn ghost" data-dupe="-' + s.code + '">−</button>' +
       "<b>" + Store.dupes(s.code) + "</b>" +
@@ -147,7 +158,7 @@
     var nearlyHtml = nearly.length
       ? nearly.map(function (x) {
           return '<button class="mini-team" data-team="' + x.t.code + '">' +
-            '<span class="flag">' + x.t.flag + "</span>" +
+            teamFlag(x.t) +
             '<span class="mt-name">' + esc(x.t.name) + "</span>" +
             '<span class="mt-count">' + x.s.have + "/" + x.s.total + "</span>" +
             progressBar(x.s.have, x.s.total) + "</button>";
@@ -176,7 +187,7 @@
       var s = teamStats(t);
       var cls = s.complete ? "complete" : s.have === 0 ? "empty" : "partial";
       return '<button class="team-card ' + cls + '" data-team="' + t.code + '">' +
-        '<div class="tc-head"><span class="flag">' + t.flag + '</span><span class="tc-name">' + esc(t.name) + "</span>" +
+        '<div class="tc-head">' + teamFlag(t) + '<span class="tc-name">' + esc(t.name) + "</span>" +
         (s.complete ? '<span class="badge-ok">✓</span>' : "") + "</div>" +
         '<div class="tc-count">' + s.have + " / " + s.total + "</div>" +
         progressBar(s.have, s.total) +
@@ -205,7 +216,7 @@
       '<section class="panel">' +
         '<div class="detail-head">' +
           '<button class="btn ghost" data-nav="teams">← Teams</button>' +
-          "<h2>" + team.flag + " " + esc(team.name) + ' <small>' + s.have + "/" + s.total + "</small></h2>" +
+          "<h2>" + teamFlag(team) + " " + esc(team.name) + ' <small>' + s.have + "/" + s.total + "</small></h2>" +
           '<div class="detail-actions">' +
             '<button class="btn" data-bulk="all" data-team="' + team.code + '">Alles afvinken</button>' +
             '<button class="btn ghost" data-bulk="none" data-team="' + team.code + '">Wissen</button>' +
@@ -226,7 +237,7 @@
     return (
       '<div class="tile ' + (owned ? "owned" : "missing") + '" data-toggle="' + s.code + '">' +
         '<div class="tile-top">' +
-          '<span class="tflag">' + s.countryFlag + "</span>" +
+          stickerFlag(s) +
           '<span class="tile-code">' + esc(s.code) + "</span>" +
           (tag ? '<span class="tag">' + tag + "</span>" : "") +
           '<span class="tile-check">' + (owned ? "✓" : "") + "</span>" +
@@ -329,7 +340,7 @@
       .map(function (t) { return { t: t, s: teamStats(t) }; })
       .sort(function (a, b) { return (a.s.have / a.s.total) - (b.s.have / b.s.total); });
     var worst = sortedTeams.slice(0, 5).map(function (x) {
-      return '<li><button class="link" data-team="' + x.t.code + '">' + x.t.flag + " " + esc(x.t.name) + "</button> — " + x.s.have + "/" + x.s.total + "</li>";
+      return '<li><button class="link" data-team="' + x.t.code + '">' + teamFlag(x.t) + " " + esc(x.t.name) + "</button> — " + x.s.have + "/" + x.s.total + "</li>";
     }).join("");
 
     return (

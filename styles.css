@@ -141,6 +141,12 @@ body {
 .tile.owned { background: var(--owned-bg); border-color: var(--owned-line); }
 .tile-top { display: flex; align-items: center; gap: 7px; }
 .tile-top .tflag { font-size: 19px; line-height: 1; }
+
+/* echte vlag-afbeeldingen */
+.flag-img { width: 24px; height: 18px; object-fit: cover; border-radius: 3px; box-shadow: 0 0 0 1px var(--line); vertical-align: middle; display: inline-block; background: var(--bar-bg); flex: none; }
+.tc-head .flag-img { width: 30px; height: 22px; }
+.detail-head .flag-img { width: 32px; height: 24px; }
+.miss-list .flag-img, .dupe-row .flag-img, .gap-list .flag-img { width: 22px; height: 16px; }
 .tile-code { font-size: 15px; font-weight: 800; color: var(--text); letter-spacing: .3px; }
 .tag { background: var(--accent2); color: #fff; border-radius: 6px; padding: 2px 6px; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .3px; }
 .tile-check { margin-left: auto; color: var(--accent); font-weight: 900; font-size: 18px; }

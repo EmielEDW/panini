@@ -147,9 +147,20 @@
     });
   });
 
+  // FIFA-code → ISO-3166 alpha-2 (voor echte vlag-afbeeldingen, ipv emoji die in Chrome/Windows als code tonen)
+  var ISO2 = {
+    MEX: "mx", RSA: "za", KOR: "kr", CZE: "cz", CAN: "ca", BIH: "ba", QAT: "qa", SUI: "ch",
+    BRA: "br", MAR: "ma", HAI: "ht", SCO: "gb-sct", USA: "us", PAR: "py", AUS: "au", TUR: "tr",
+    GER: "de", CUW: "cw", CIV: "ci", ECU: "ec", NED: "nl", JPN: "jp", SWE: "se", TUN: "tn",
+    BEL: "be", EGY: "eg", IRN: "ir", NZL: "nz", ESP: "es", CPV: "cv", KSA: "sa", URU: "uy",
+    FRA: "fr", SEN: "sn", IRQ: "iq", NOR: "no", ARG: "ar", ALG: "dz", AUT: "at", JOR: "jo",
+    POR: "pt", COD: "cd", UZB: "uz", COL: "co", ENG: "gb-eng", CRO: "hr", GHA: "gh", PAN: "pa"
+  };
+
   // 3) Teams (48 x 20)
   TEAMS.forEach(function (t) {
     var name = t[0], code = t[1], flag = t[2], conf = t[3], group = t[4];
+    var iso = ISO2[code] || null;
     var sectionId = "team-" + code;
     sections.push({
       id: sectionId,
@@ -160,7 +171,7 @@
       confederation: conf,
       group: group
     });
-    teams.push({ code: code, name: name, flag: flag, confederation: conf, group: group, sectionId: sectionId });
+    teams.push({ code: code, name: name, flag: flag, iso: iso, confederation: conf, group: group, sectionId: sectionId });
 
     for (var n = 1; n <= 20; n++) {
       var type, label;
@@ -181,6 +192,7 @@
         name: label,
         country: name,
         countryFlag: flag,
+        iso: iso,
         sectionId: sectionId,
         type: type,
         inPacks: true,
