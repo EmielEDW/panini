@@ -167,12 +167,13 @@
       if (n === 1) {
         type = "logo";
         label = "Teamlogo (Foil)";
-      } else if (n === 2) {
+      } else if (n === 13) {
         type = "teamphoto";
         label = "Teamfoto";
       } else {
         type = "player";
-        label = name + " speler " + (n - 2);
+        // spelers doorlopend nummeren, logo (1) en teamfoto (13) overslaan
+        label = name + " speler " + (n < 13 ? n - 1 : n - 2);
       }
       add({
         code: code + n,

@@ -206,7 +206,7 @@
     return (
       '<div class="tile ' + (owned ? "owned" : "missing") + '" data-toggle="' + s.code + '">' +
         '<button class="edit-name" data-edit="' + s.code + '" title="Naam aanpassen">✎</button>' +
-        '<div class="tile-num">' + esc(s.code) + (typeTag ? ' <span class="tag">' + typeTag + "</span>" : "") + "</div>" +
+        '<div class="tile-num"><span class="tflag">' + s.countryFlag + "</span> " + esc(s.code) + (typeTag ? ' <span class="tag">' + typeTag + "</span>" : "") + "</div>" +
         '<div class="tile-name">' + esc(name) + "</div>" +
         '<div class="tile-foot">' +
           '<div class="dupe-ctl' + (dupes > 0 ? " has" : "") + '" title="Dubbels (extra exemplaren)">' +
